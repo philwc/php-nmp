@@ -8,8 +8,8 @@ require 'vendor/autoload.php';
 
 $batch = new \philwc\NMPBatch();
 
-$id       = '5888E02000001994';
-$security = 'EdX7CqkmlQwG8SA9MOPvt8_SIERyaa3B-jjde6k3UcndKFE';
+$id       = '';
+$security = '';
 
 foreach ($users as $k => $v) {
     $email = new \philwc\NMPMessage();
