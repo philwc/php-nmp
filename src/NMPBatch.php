@@ -7,6 +7,9 @@
 namespace philwc;
 
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Stream\Stream;
+
 class NMPBatch
 {
     // api url
@@ -114,7 +117,7 @@ class NMPBatch
     /**
      * Send to Emailvision API
      *
-     * @return bool
+     * @return bool|array
      */
     public function send()
     {
@@ -124,22 +127,23 @@ class NMPBatch
 		' . $this->getMessages() . '
 		</MultiSendRequest>';
 
-        // init curl and send xml to API
-        $curl = curl_init(self::API_URL);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $xml);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $curl_response = curl_exec($curl);
-        curl_close($curl);
+        $client  = new Client();
+        $request = $client->createRequest('POST', self::API_URL);
+        $request->addHeader('Content-Type', 'text/xml');
+        $request->setBody(Stream::factory($xml));
+        $response = $client->send($request);
+
+        try {
+            $xmlResponse = $response->xml();
+        } catch (\Exception $e) {
+            $xmlResponse = '';
+        }
 
         // if debug mode is true, send input + output, else return booleans
         if ($this->getDebug()) {
-            return array('output' => $curl_response, 'input' => $this);
+            return array('output' => $xmlResponse, 'input' => $this->getMessages());
         } else {
-            return ($curl_response != 1) ? true : false;
+            return $xmlResponse != '';
         }
     }
 }
