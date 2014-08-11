@@ -1,0 +1,22 @@
+{
+    "name": "philwc/nmp-php",
+    "description": "Package for using/consuming the EmailVision/Smartfocus Notification Messaging Platfom (NMP)",
+    "keywords": ["emv", "emailvision", "smartfocus", "nmp", "notification messaging platform"],
+    "homepage": "https://github.com/philwc/php-nmp",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Phil Wright- Christie",
+            "email": "philwc@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "philwc\\": "src/"
+        }
+    }
+
+}
