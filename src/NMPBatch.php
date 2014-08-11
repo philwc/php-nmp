@@ -135,15 +135,17 @@ class NMPBatch
 
         try {
             $xmlResponse = $response->xml();
+            $success     = true;
         } catch (\Exception $e) {
-            $xmlResponse = '';
+            $success     = false;
+            $xmlResponse = $response->getBody();
         }
 
         // if debug mode is true, send input + output, else return booleans
         if ($this->getDebug()) {
             return array('output' => $xmlResponse, 'input' => $this->getMessages());
         } else {
-            return $xmlResponse != '';
+            return $success;
         }
     }
 }
