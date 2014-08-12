@@ -93,6 +93,25 @@ class NMPMessage
     }
 
     /**
+     * Reset the class to default
+     */
+    public function reset()
+    {
+        $this->_notificationId     = null;
+        $this->_encryptToken       = null;
+        $this->_randomToken        = null;
+        $this->_sync_type          = 'UPDATE';
+        $this->_sync_key           = 'email';
+        $this->_email_time         = null;
+        $this->_email_recipient    = null;
+        $this->_email_dynamic      = array();
+        $this->_email_content_html = null;
+        $this->_email_content_text = null;
+
+        $this->__construct();
+    }
+
+    /**
      * Set notificationId
      *
      * @param int $notificationId
