@@ -109,16 +109,22 @@ class NMPMessage
         $this->_email_content_text = null;
 
         $this->__construct();
+
+        return $this;
     }
 
     /**
      * Set notificationId
      *
-     * @param int $notificationId
+     * @param $notificationId
+     *
+     * @return $this
      */
     public function setNotificationId($notificationId)
     {
         $this->_notificationId = (int) $notificationId;
+
+        return $this;
     }
 
     /**
@@ -134,11 +140,15 @@ class NMPMessage
     /**
      * Set encryptToken
      *
-     * @param string $encryptToken
+     * @param $encryptToken
+     *
+     * @return $this
      */
     public function setEncryptToken($encryptToken)
     {
         $this->_encryptToken = (string) $encryptToken;
+
+        return $this;
     }
 
     /**
@@ -154,11 +164,15 @@ class NMPMessage
     /**
      * Set randomToken
      *
-     * @param string $randomToken
+     * @param $randomToken
+     *
+     * @return $this
      */
     public function setRandomToken($randomToken)
     {
         $this->_randomToken = (string) $randomToken;
+
+        return $this;
     }
 
     /**
@@ -174,11 +188,15 @@ class NMPMessage
     /**
      * Set sync_type
      *
-     * @param string $synctype
+     * @param $synctype
+     *
+     * @return $this
      */
     public function setSyncType($synctype)
     {
         $this->_sync_type = (string) $synctype;
+
+        return $this;
     }
 
     /**
@@ -194,11 +212,15 @@ class NMPMessage
     /**
      * Set sync_key
      *
-     * @param string $sync_key
+     * @param $sync_key
+     *
+     * @return $this
      */
     public function setSyncKey($sync_key)
     {
         $this->_sync_key = (string) $sync_key;
+
+        return $this;
     }
 
     /**
@@ -214,11 +236,15 @@ class NMPMessage
     /**
      * Set email_time: date('c')
      *
-     * @param date $email_time
+     * @param $email_time
+     *
+     * @return $this
      */
     public function setEmailTime($email_time)
     {
         $this->_email_time = (string) $email_time;
+
+        return $this;
     }
 
     /**
@@ -234,11 +260,15 @@ class NMPMessage
     /**
      * Set email_recipient
      *
-     * @param string $email_recipient
+     * @param $email_recipient
+     *
+     * @return $this
      */
     public function setEmailRecipient($email_recipient)
     {
         $this->_email_recipient = (string) $email_recipient;
+
+        return $this;
     }
 
     /**
@@ -254,12 +284,16 @@ class NMPMessage
     /**
      * Set dynamic email content
      *
-     * @param string $key
-     * @param string $value
+     * @param $key
+     * @param $value
+     *
+     * @return $this
      */
     public function addDynamicValue($key, $value)
     {
         $this->_email_dynamic[$key] = (string) $value;
+
+        return $this;
     }
 
     /**
@@ -293,11 +327,15 @@ class NMPMessage
     /**
      * Set HTML mail
      *
-     * @param string $content
+     * @param $content
+     *
+     * @return $this
      */
     public function setMailHtml($content)
     {
         $this->_email_content_html = (string) $content;
+
+        return $this;
     }
 
     /**
@@ -313,11 +351,15 @@ class NMPMessage
     /**
      * Set Text mail
      *
-     * @param string $content
+     * @param $content
+     *
+     * @return $this
      */
     public function setMailText($content)
     {
         $this->_email_content_text = (string) $content;
+
+        return $this;
     }
 
     /**

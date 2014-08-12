@@ -34,20 +34,28 @@ class NMPBatch
      * Add message to message array
      *
      * @param NMPMessage $message
+     *
+     * @return $this
      */
     public function addMessage(NMPMessage $message)
     {
         $this->_messages[] = $message;
+
+        return $this;
     }
 
     /**
      * Set debug
      *
-     * @param int $debug
+     * @param $debug
+     *
+     * @return $this
      */
     public function setDebug($debug)
     {
         $this->_debug = (bool) $debug;
+
+        return $this;
     }
 
     /**
