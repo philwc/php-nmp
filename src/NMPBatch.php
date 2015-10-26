@@ -68,57 +68,83 @@ class NMPBatch
         return $this->_debug;
     }
 
+
     /**
-     * Returns all messages
-     *
-     * @return array
+     * @return \DOMDocument
      */
-    private function getMessages()
+    private function getMessages(\DOMDocument $domTree)
     {
-        $output = '';
+
+        $requestMain = $domTree->createElement('sendrequest');
+        $dynMain     = $domTree->createElement('dyn');
+        $entryMain   = $domTree->createElement('entry');
+
+        $ret = [];
+
+        /** @var \philwc\NMPMessage $val */
         foreach ($this->_messages as $val) {
-            $output .= '<sendrequest>
-				<dyn>';
+            $request = clone $requestMain;
+            $dyn     = clone $dynMain;
+
+            $request->appendChild($dyn);
 
             $kpv = $val->returnDynamicValues();
             if (count($kpv) > 0) {
                 foreach ($kpv as $k => $v) {
-                    $output .= '
-                    <entry>
-                        <key>' . $k . '</key>
-						<value>' . $v . '</value>
-					</entry>';
+                    $e     = clone $entryMain;
+                    $key   = $domTree->createElement('key', $k);
+                    $value = $domTree->createElement('value', $v);
+
+                    $e->appendChild($key)
+                      ->appendChild($value);
+
+                    $dyn->appendChild($e);
                 }
             }
 
-            $output .= '
-				</dyn>
-				<content>
-					<entry>
-						<key>1</key>
-						<value>
-							<![CDATA[' . $val->getMailHtml() . ']]>
-						</value>
-					</entry>
-					<entry>
-						<key>2</key>
-						<value>
-							<![CDATA[' . $val->getMailText() . ']]>
-						</value>
-					</entry>
-				</content>
+            $content = $domTree->createElement('content');
+            $entry1  = clone $entryMain;
+            $key1    = $domTree->createElement('key', 1);
+            $value1  = $domTree->createElement('value', $val->getMailHtml());
+            $entry1->appendChild($key1)
+                   ->appendChild($value1);
 
-				<notificationId>' . $val->getNotificationId() . '</notificationId>
-				<email>' . $val->getEmailRecipient() . '</email>
-				<encrypt>' . $val->getEncryptToken() . '</encrypt>
-				<random>' . $val->getRandomToken() . '</random>
-				<senddate>' . $val->getEmailTime() . '</senddate>
-				<synchrotype>' . $val->getSyncType() . '</synchrotype>
-				<uidkey>' . $val->getSyncKey() . '</uidkey>
-			</sendrequest>';
+            $entry2 = clone $entryMain;
+            $key2   = $domTree->createElement('key', 2);
+            $value2 = $domTree->createElement('value', $val->getMailText());
+            $entry2->appendChild($key2)
+                   ->appendChild($value2);
+
+            $content->appendChild($entry1)
+                    ->appendChild($entry2);
+
+            $notificationId = $domTree->createElement('notificationId', $val->getNotificationId());
+            $content->appendChild($notificationId);
+
+            $email = $domTree->createElement('email', $val->getEmailRecipient());
+            $content->appendChild($email);
+
+            $encrypt = $domTree->createElement('encrypt', $val->getEncryptToken());
+            $content->appendChild($encrypt);
+
+            $random = $domTree->createElement('random', $val->getRandomToken());
+            $content->appendChild($random);
+
+            $senddate = $domTree->createElement('senddate', $val->getEmailTime());
+            $content->appendChild($senddate);
+
+            $synchrotype = $domTree->createElement('synchrotype', $val->getSyncType());
+            $content->appendChild($synchrotype);
+
+            $uidkey = $domTree->createElement('uidkey', $val->getSyncKey());
+            $content->appendChild($uidkey);
+
+            $request->appendChild($content);
+
+            $ret[] = $request;
         }
 
-        return $output;
+        return $ret;
     }
 
 
@@ -129,16 +155,31 @@ class NMPBatch
      */
     public function send()
     {
-        // build final xml
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>
-		<MultiSendRequest>
-		' . $this->getMessages() . '
-		</MultiSendRequest>';
+        $domTree = new \DOMDocument('1.0', 'UTF-8');
+        $root    = $domTree->createElement('MultiSendRequest');
 
-        $client  = new Client();
-        $request = $client->createRequest('POST', self::API_URL);
-        $request->addHeader('Content-Type', 'text/xml');
-        $request->setBody(Stream::factory($xml));
+        /** @var \DOMElement $message */
+        foreach ($this->getMessages($domTree) as $message) {
+
+            //var_dump($message);
+            //$domTree->importNode($message, true);
+
+            $root->appendChild($message);
+        }
+
+        $root = $domTree->appendChild($root);
+
+        // build final xml
+        $xml = $domTree->saveXML($root);
+        var_dump($xml);
+        die();
+
+        $client = new Client();
+        $stream = \GuzzleHttp\Psr7\stream_for($xml);
+
+        $request = $client->request('POST', self::API_URL,
+            ['headers' => ['Content-Type' => 'text/xml'], 'body' => $stream]);
+
         $response = $client->send($request);
 
         try {
@@ -152,7 +193,8 @@ class NMPBatch
         // if debug mode is true, send input + output, else return booleans
         if ($this->getDebug()) {
             return array('output' => $xmlResponse, 'input' => $this->getMessages());
-        } else {
+        }
+        else {
             return $success;
         }
     }

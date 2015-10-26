@@ -250,11 +250,11 @@ class NMPMessage
     /**
      * Get $email_time
      *
-     * @return date
+     * @return string
      */
     public function getEmailTime()
     {
-        return $this->_email_time;;
+        return $this->_email_time;
     }
 
     /**
